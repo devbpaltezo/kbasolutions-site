@@ -28,8 +28,7 @@ if (form && result) form.addEventListener('submit', async event => {
   const submitButton = form.querySelector('button[type="submit"]');
   const originalButtonText = submitButton ? submitButton.innerHTML : '';
   const data = new FormData(form);
-  const payload = Object.fromEntries(data.entries());
-
+  data.append('_subject', 'New KBA Solutions website inquiry');
   result.hidden = false;
   result.textContent = 'Sending your inquiry…';
   result.setAttribute('role', 'status');
@@ -37,41 +36,21 @@ if (form && result) form.addEventListener('submit', async event => {
     submitButton.disabled = true;
     submitButton.textContent = 'Sending…';
   }
-
   try {
-    const response = await fetch('/api/contact', {
+    const response = await fetch('https://formspree.io/f/xzeezdpg', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: data,
+      headers: { 'Accept': 'application/json' }
     });
-    const responseData = await response.json();
-    if (!response.ok || !responseData.success) {
-      throw new Error(responseData.message || 'Your inquiry could not be sent. Please try again.');
+    const responseData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const detail = Array.isArray(responseData.errors) ? responseData.errors.map(item => item.message).join(' ') : '';
+      throw new Error(detail || 'Your inquiry could not be sent. Please try again.');
     }
-    result.textContent = responseData.message;
+    result.textContent = 'Thanks! Your inquiry has been sent. We’ll get back to you as soon as we can.';
     form.reset();
   } catch (error) {
-    result.replaceChildren();
-    const notice = document.createElement('p');
-    notice.textContent = 'Automatic email delivery is unavailable right now. You can still send your inquiry using your email app:';
-    const emailLink = document.createElement('a');
-    const subject = 'KBA Solutions website inquiry — ' + (payload.name || 'New inquiry');
-    const body = [
-      'KBA SOLUTIONS — NEW WEBSITE INQUIRY',
-      '',
-      'Name: ' + (payload.name || ''),
-      'Business: ' + (payload.business || 'Not provided'),
-      'Customer email: ' + (payload.email || ''),
-      'Interested in: ' + (payload.service || ''),
-      'Budget: ' + (payload.budget || 'Not specified'),
-      '',
-      'What they want to improve:',
-      payload.message || ''
-    ].join('\\n');
-    emailLink.href = 'mailto:info.kbasolutions@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    emailLink.textContent = 'Open email app to send inquiry';
-    emailLink.className = 'email-fallback-link';
-    result.append(notice, emailLink);
+    result.textContent = error.message || 'We couldn’t send your inquiry right now. Please try again later.';
   } finally {
     if (submitButton) {
       submitButton.disabled = false;
