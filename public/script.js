@@ -51,7 +51,27 @@ if (form && result) form.addEventListener('submit', async event => {
     result.textContent = responseData.message;
     form.reset();
   } catch (error) {
-    result.textContent = error.message || 'We couldn’t send your inquiry right now. Please try again in a moment.';
+    result.replaceChildren();
+    const notice = document.createElement('p');
+    notice.textContent = 'Automatic email delivery is unavailable right now. You can still send your inquiry using your email app:';
+    const emailLink = document.createElement('a');
+    const subject = 'KBA Solutions website inquiry — ' + (payload.name || 'New inquiry');
+    const body = [
+      'KBA SOLUTIONS — NEW WEBSITE INQUIRY',
+      '',
+      'Name: ' + (payload.name || ''),
+      'Business: ' + (payload.business || 'Not provided'),
+      'Customer email: ' + (payload.email || ''),
+      'Interested in: ' + (payload.service || ''),
+      'Budget: ' + (payload.budget || 'Not specified'),
+      '',
+      'What they want to improve:',
+      payload.message || ''
+    ].join('\\n');
+    emailLink.href = 'mailto:info.kbasolutions@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    emailLink.textContent = 'Open email app to send inquiry';
+    emailLink.className = 'email-fallback-link';
+    result.append(notice, emailLink);
   } finally {
     if (submitButton) {
       submitButton.disabled = false;
