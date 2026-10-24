@@ -39,3 +39,14 @@ html{font-size:17px}body{font-size:1rem;line-height:1.7}.brand{font-size:1rem}.s
 @media(max-width:960px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-card:last-child{grid-column:1/-1}}
 @media(max-width:700px){.products{padding-top:64px;padding-bottom:66px}.product-grid{grid-template-columns:minmax(0,1fr);gap:15px}.product-card,.product-card:last-child{grid-column:auto;padding:22px}.product-card h3{font-size:1.35rem}.product-card>p{font-size:.95rem}.product-card li{font-size:.9rem}.report-preview{padding:11px;gap:9px}.report-preview small{font-size:.7rem}.products-note{font-size:.85rem;padding:14px 15px}}
 @media(max-width:390px){.product-card{padding:19px}.product-card-top{margin-bottom:16px}.product-icon{width:44px;height:44px}.product-label{font-size:.62rem}.report-preview{align-items:flex-start}.report-phone{flex-basis:30px;width:30px;height:30px}.report-preview b{font-size:.78rem}.report-preview small{overflow-wrap:anywhere}}
+
+/* Pricing cards: prevent long prices and copy from overflowing */
+.pricing-grid,.price-card,.price-top,.price-body{min-width:0;max-width:100%}
+.price{white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.2;font-size:clamp(1.45rem,2.3vw,2rem)}
+.price small{white-space:normal;overflow-wrap:anywhere}
+.price-top h3,.price-top>p,.price-card li,.fine-print,.pricing-note{overflow-wrap:anywhere;word-break:normal}
+.price-card ul{min-width:0}
+.price-card .button{max-width:100%;white-space:normal;text-align:center;line-height:1.4}
+@media(max-width:960px){.pricing-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.price-card:last-child{grid-column:1/-1}.price{font-size:clamp(1.4rem,3vw,1.85rem)}}
+@media(max-width:700px){.pricing-grid{grid-template-columns:minmax(0,1fr)}.price-card,.price-card:last-child{grid-column:auto}.price{font-size:1.9rem;overflow-wrap:break-word}.price-top,.price-body{padding:22px}.price-top h3{line-height:1.25}.price-card li{align-items:flex-start;min-width:0}.price-card li:before{flex:0 0 auto}.pricing-note{overflow-wrap:anywhere}}
+@media(max-width:390px){.price{font-size:1.7rem}.price-top,.price-body{padding:19px}.popular-label{max-width:55%;text-align:center;white-space:normal;line-height:1.35}}
