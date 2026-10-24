@@ -43,7 +43,7 @@ html{font-size:17px}body{font-size:1rem;line-height:1.7}.brand{font-size:1rem}.s
 /* Pricing cards: prevent long prices and copy from overflowing */
 .pricing-grid,.price-card,.price-top,.price-body{min-width:0;max-width:100%}
 .price{white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.2;font-size:clamp(1.45rem,2.3vw,2rem)}
-.price small{white-space:normal;overflow-wrap:anywhere}
+.price small{display:block;margin-top:5px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
 .price-top h3,.price-top>p,.price-card li,.fine-print,.pricing-note{overflow-wrap:anywhere;word-break:normal}
 .price-card ul{min-width:0}
 .price-card .button{max-width:100%;white-space:normal;text-align:center;line-height:1.4}
