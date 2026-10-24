@@ -25,26 +25,40 @@ const form = document.getElementById('inquiryForm');
 const result = document.getElementById('formResult');
 if (form && result) form.addEventListener('submit', async event => {
   event.preventDefault();
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton ? submitButton.innerHTML : '';
   const data = new FormData(form);
-  const inquiry = [
-    'BP SOLUTIONS — NEW INQUIRY',
-    'Name: ' + (data.get('name') || ''),
-    'Business: ' + (data.get('business') || 'Not provided'),
-    'Interested in: ' + (data.get('service') || ''),
-    'Budget: ' + (data.get('budget') || 'Not specified'),
-    '',
-    'What they want to improve:',
-    data.get('message') || ''
-  ].join('\n');
+  const payload = Object.fromEntries(data.entries());
+
   result.hidden = false;
-  result.textContent = inquiry + '\n\nCopy this inquiry and send it to BP Solutions. A direct email or messaging link can be added once official contact details are available.';
-  try {
-    await navigator.clipboard.writeText(inquiry);
-    result.textContent = 'Inquiry copied to your clipboard. You can now paste and send it to BP Solutions.\n\n' + inquiry;
-  } catch (error) {
-    result.textContent = 'Your inquiry is ready below. Select and copy it to send to BP Solutions.\n\n' + inquiry;
+  result.textContent = 'Sending your inquiry…';
+  result.setAttribute('role', 'status');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending…';
   }
-  result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const responseData = await response.json();
+    if (!response.ok || !responseData.success) {
+      throw new Error(responseData.message || 'Your inquiry could not be sent. Please try again.');
+    }
+    result.textContent = responseData.message;
+    form.reset();
+  } catch (error) {
+    result.textContent = error.message || 'We couldn’t send your inquiry right now. Please try again in a moment.';
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    }
+    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 });
 const year = document.getElementById('year');
 if (year) year.textContent = new Date().getFullYear();
